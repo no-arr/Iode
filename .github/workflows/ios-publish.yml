@@ -36,7 +36,7 @@ jobs:
         run: godot --headless --build-solutions --quit || exit 0
 
       - name: 🦺 Build Projects
-        run: dotnet build --configuration Release
+        run: dotnet build --configuration Debug
 
       - name: 🔧 Prepare Export Environment
         run: |
@@ -71,16 +71,6 @@ jobs:
             if timeout 120 godot --headless --no-window --disable-render-loop --export-debug "iOS" ios_export/iode.xcodeproj 2>&1; then
               if [ -d "ios_export/iode.xcodeproj" ]; then
                 echo "✅ Method 2 succeeded!"
-                SUCCESS=true
-              fi
-            fi
-          fi
-          
-          if [ "$SUCCESS" = false ]; then
-            echo "🔄 Method 3: Release export instead of debug..."
-            if timeout 120 godot --headless --verbose --export-release "iOS" ios_export/iode.xcodeproj 2>&1; then
-              if [ -d "ios_export/iode.xcodeproj" ]; then
-                echo "✅ Method 3 succeeded!"
                 SUCCESS=true
               fi
             fi
@@ -155,7 +145,7 @@ jobs:
           xcodebuild \
             -project iode.xcodeproj \
             -scheme iode \
-            -configuration Release \
+            -configuration Debug \
             -destination generic/platform=iOS \
             -archivePath iode.xcarchive \
             CODE_SIGN_IDENTITY="" \
