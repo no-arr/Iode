@@ -1,5 +1,6 @@
 name: 🚥 iOS Build
-on: push
+on: 
+  workflow_dispatch:
 
 jobs:
   tests:
@@ -64,5 +65,5 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: Iode-Project
-          path: ${{ runner.temp }}/Iode-Project.xcarchive
+          path: ${{ runner.temp }}/Iode.ipa
           retention-days: 3
