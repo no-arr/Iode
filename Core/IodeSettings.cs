@@ -11,7 +11,7 @@ namespace Iode.Core
         {
             if (Singleton != null)
             {
-                throw new InvalidOperationException("Singleton for IodeSettings already exists.");
+                throw new InvalidOperationException("Singleton for ProjectManager already exists.");
             }
 
             Singleton = this;
