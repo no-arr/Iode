@@ -55,4 +55,16 @@ jobs:
       - name: 🧪 Compiling ipa
         run: | 
             cd ios_export
+            xcodebuild archive -project iode.xcodeproj -scheme 'iode' -archivePath Iode-Project.xcarchive -configuration Release CODE_SIGN_IDENTITY="" CODE_SIGNING_REQUIRED=NO
+            #mkdir Payload
+            mv Iode-Project.xcarchive ${{ runner.temp }}/Iode-Project.xcarchive
             ls
+        
+      - name: Upload application
+        uses: actions/upload-artifact@v4
+        with:
+          name: Iode-Project
+          path: ${{ runner.temp }}/Iode-Project.xcarchive
+          # you can also archive the entire directory
+          # path: ${{ runner.temp }}/build
+          retention-days: 3
