@@ -1,12 +1,18 @@
-name: 🚥 iOS Build (Unsigned IPA) - Fixed for Godot Crash
+name: 🚥 iOS Build
 on: push
+
 jobs:
-  build-ios:
-    name: 👀 Building iOS App
-    runs-on: macos-latest
+  tests:
+    name: 👀 Building  on ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [macos-latest]
     env:
       DOTNET_CLI_TELEMETRY_OPTOUT: true
       DOTNET_NOLOGO: true
+      # Smaller cache size
       NUGET_PACKAGES: ${{ github.workspace }}/.nuget/packages
       DOTNET_SKIP_FIRST_TIME_EXPERIENCE: true
     defaults:
@@ -24,12 +30,15 @@ jobs:
       - name: 📦 Restore Dependencies
         run: dotnet restore
 
-      # Try with a more stable Godot version first
       - uses: chickensoft-games/setup-godot@v2
-        name: 🤖 Setup Godot (Stable)
+        name: 🤖 Setup Godot
         with:
-          version: 4.5.0-beta4  # Use stable version instead of beta
+          # Version must include major, minor, and patch, and be >= 4.0.0
+          # Pre-release label is optional.
+          version: 4.5.0-beta.4 # also valid: 4.0.0.rc1 or 4.0.0 or "global.json", etc
+          # Use .NET-enabled version of Godot (the default is also true).
           use-dotnet: true
+          # Include the Godot Export Templates (the default is false).
           include-templates: true
 
       - name: 🧑‍🔬 Generate .NET Bindings
@@ -38,236 +47,11 @@ jobs:
       - name: 🦺 Build Projects
         run: dotnet build --configuration Debug
 
-      - name: 🔧 Prepare Export Environment
+      - name: 📦 Export Game (MacOS Headless)
         run: |
-          # Create export directory
-          mkdir -p ios_export
-          
-          # Set up virtual display for non-headless export (fallback)
-          export DISPLAY=:99
-          # Note: Xvfb might not be needed on macOS, but we'll prepare the environment
-          
-          # Verify Godot can run
-          godot --version
-          
-          # List available export templates
-          godot --headless --export-pack "" --quit 2>&1 | grep -i ios || echo "Checking iOS template availability..."
-
-      - name: 📦 Export iOS Project (Multiple Methods)
-        run: |
-          mkdir -p ios_export
-          SUCCESS=false
-          
-          echo "🔄 Method 1: Standard headless export with timeout..."
-          if timeout 120 godot --headless --verbose --export-debug "iOS" ios_export/iode.xcodeproj 2>&1; then
-            if [ -d "ios_export/iode.xcodeproj" ]; then
-              echo "✅ Method 1 succeeded!"
-              SUCCESS=true
-            fi
-          fi
-          
-          if [ "$SUCCESS" = false ]; then
-            echo "🔄 Method 2: Headless export with different flags..."
-            if timeout 120 godot --headless --no-window --disable-render-loop --export-debug "iOS" ios_export/iode.xcodeproj 2>&1; then
-              if [ -d "ios_export/iode.xcodeproj" ]; then
-                echo "✅ Method 2 succeeded!"
-                SUCCESS=true
-              fi
-            fi
-          fi
-          
-          if [ "$SUCCESS" = false ]; then
-            echo "🔄 Method 4: Non-headless with virtual display..."
-            export DISPLAY=:99
-            # Start virtual display (if available)
-            nohup Xvfb :99 -screen 0 1024x768x24 >/dev/null 2>&1 & 
-            sleep 3
-            
-            if timeout 120 godot --export-debug "iOS" ios_export/iode.xcodeproj 2>&1; then
-              if [ -d "ios_export/iode.xcodeproj" ]; then
-                echo "✅ Method 4 succeeded!"
-                SUCCESS=true
-              fi
-            fi
-          fi
-          
-          # Final verification
-          if [ "$SUCCESS" = false ]; then
-            echo "❌ All export methods failed."
-            echo "This is a known issue with Godot iOS exports in CI environments."
-            echo "Attempting to create a basic project structure for manual building..."
-            
-            # Create minimal structure to at least show what would be needed
             mkdir -p ios_export
-            echo "iOS export failed - known Godot 4.x CI issue" > ios_export/export_failed.txt
-            echo "Consider using local export or different Godot version" >> ios_export/export_failed.txt
-            
-            # List what we have
-            echo "=== Current directory contents ==="
-            ls -la
-            echo "=== Project files ==="
-            find . -name "*.cs" -o -name "*.csproj" -o -name "project.godot" | head -10
-            
-            exit 1
-          else
-            echo "🎉 iOS export completed successfully!"
-            ls -la ios_export/
-          fi
-
-      - name: 🔧 Configure Xcode Project for Unsigned Build
-        run: |
-          cd ios_export
-          
-          if [ ! -f "iode.xcodeproj/project.pbxproj" ]; then
-            echo "❌ project.pbxproj not found. Export may have failed."
-            ls -la
-            exit 1
-          fi
-          
-          echo "Configuring project for unsigned build..."
-          
-          # Backup original file
-          cp "iode.xcodeproj/project.pbxproj" "iode.xcodeproj/project.pbxproj.bak"
-          
-          # Remove/modify code signing requirements
-          sed -i '' 's/CODE_SIGN_IDENTITY = .*/CODE_SIGN_IDENTITY = "";/g' "iode.xcodeproj/project.pbxproj"
-          sed -i '' 's/CODE_SIGN_STYLE = .*/CODE_SIGN_STYLE = Manual;/g' "iode.xcodeproj/project.pbxproj"
-          sed -i '' 's/DEVELOPMENT_TEAM = .*/DEVELOPMENT_TEAM = "";/g' "iode.xcodeproj/project.pbxproj"
-          sed -i '' 's/PROVISIONING_PROFILE_SPECIFIER = .*/PROVISIONING_PROFILE_SPECIFIER = "";/g' "iode.xcodeproj/project.pbxproj"
-          
-          echo "✅ Project configured for unsigned build"
-
-      - name: 🏗️ Build Xcode Project
-        run: |
-          cd ios_export
-          
-          echo "Building iOS project..."
-          xcodebuild \
-            -project iode.xcodeproj \
-            -scheme iode \
-            -configuration Debug \
-            -destination generic/platform=iOS \
-            -archivePath iode.xcarchive \
-            CODE_SIGN_IDENTITY="" \
-            CODE_SIGNING_REQUIRED=NO \
-            CODE_SIGNING_ALLOWED=NO \
-            DEVELOPMENT_TEAM="" \
-            PROVISIONING_PROFILE_SPECIFIER="" \
-            archive \
-            | tee build.log
-          
-          # Check if archive was created
-          if [ -d "iode.xcarchive" ]; then
-            echo "✅ Archive created successfully"
-            ls -la iode.xcarchive/
-          else
-            echo "❌ Archive creation failed"
-            echo "Build log:"
-            cat build.log || echo "No build log found"
-            exit 1
-          fi
-
-      - name: 📱 Create IPA from Archive
-        run: |
-          cd ios_export
-          
-          if [ ! -d "iode.xcarchive" ]; then
-            echo "❌ No archive found to create IPA from"
-            exit 1
-          fi
-          
-          echo "Creating IPA from archive..."
-          
-          # Method 1: Try standard export
-          cat > export_options.plist << EOF
-          <?xml version="1.0" encoding="UTF-8"?>
-          <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
-          <plist version="1.0">
-          <dict>
-              <key>method</key>
-              <string>development</string>
-              <key>signingStyle</key>
-              <string>manual</string>
-              <key>stripSwiftSymbols</key>
-              <true/>
-              <key>uploadBitcode</key>
-              <false/>
-              <key>uploadSymbols</key>
-              <false/>
-              <key>compileBitcode</key>
-              <false/>
-          </dict>
-          </plist>
-          EOF
-          
-          # Try to export using xcodebuild
-          if xcodebuild \
-            -exportArchive \
-            -archivePath iode.xcarchive \
-            -exportPath ipa_output \
-            -exportOptionsPlist export_options.plist 2>&1 | tee export.log; then
-            
-            echo "✅ IPA export completed"
-            ls -la ipa_output/
-          else
-            echo "⚠️ Standard export failed, trying manual method..."
-            
-            # Method 2: Manual IPA creation
-            mkdir -p manual_ipa/Payload
-            
-            # Find the .app bundle
-            APP_PATH=$(find iode.xcarchive -name "*.app" -type d | head -1)
-            if [ -n "$APP_PATH" ]; then
-              echo "Found app at: $APP_PATH"
-              cp -r "$APP_PATH" manual_ipa/Payload/
-              
-              # Create IPA
-              cd manual_ipa
-              zip -r ../iode_unsigned.ipa Payload/
-              cd ..
-              
-              echo "✅ Manual IPA created: iode_unsigned.ipa"
-              ls -la iode_unsigned.ipa
-            else
-              echo "❌ Could not find .app bundle in archive"
-              find iode.xcarchive -type f -name "*.app" || echo "No .app files found"
-              exit 1
-            fi
-          fi
-
-      - name: 📋 List Final Output
-        run: |
-          echo "=== Final build output ==="
-          cd ios_export
-          ls -la
-          
-          echo "=== IPA files found ==="
-          find . -name "*.ipa" -type f -exec ls -la {} \;
-          
-          echo "=== Archive contents ==="
-          if [ -d "iode.xcarchive" ]; then
-            find iode.xcarchive -name "*.app" -type d
-          fi
-
-      - name: 📤 Upload Build Artifacts
-        uses: actions/upload-artifact@v4
-        with:
-          name: ios-unsigned-build
-          path: |
-            ios_export/*.ipa
-            ios_export/ipa_output/*.ipa
-            ios_export/iode.xcarchive
-            ios_export/*.log
-          retention-days: 30
-
-      # Alternative: If everything fails, at least provide the export preset for local building
-      - name: 📋 Upload Export Info (If Build Fails)
-        if: failure()
-        uses: actions/upload-artifact@v4
-        with:
-          name: export-info-for-local-build
-          path: |
-            export_presets.cfg
-            project.godot
-            ios_export/export_failed.txt
-          retention-days: 30
+            godot --headless --export-debug "iOS" ios_export/iode.zip
+      
+      - name: 🧪 Compiling ipa
+        run: | 
+            ls
