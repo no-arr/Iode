@@ -54,4 +54,5 @@ jobs:
       
       - name: 🧪 Compiling ipa
         run: | 
+            cd ios_export
             ls
