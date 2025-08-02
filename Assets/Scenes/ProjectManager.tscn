@@ -1,9 +1,178 @@
-[gd_scene format=3 uid="uid://bou28ant8jhl6"]
+[gd_scene load_steps=12 format=3 uid="uid://bou28ant8jhl6"]
 
-[node name="ProjectManager" type="Control"]
+[ext_resource type="Script" uid="uid://bcoxlphbewlju" path="res://Core/ProjectManager.cs" id="1_1orjo"]
+[ext_resource type="Texture2D" uid="uid://bnj573edodtxh" path="res://Assets/Icons/Add.svg" id="1_tswjx"]
+[ext_resource type="Texture2D" uid="uid://bvegokf5m2xk4" path="res://Assets/Icons/Load.svg" id="2_lo8bo"]
+[ext_resource type="Texture2D" uid="uid://becmudycjsddm" path="res://Assets/Icons/Search.svg" id="3_ikh36"]
+[ext_resource type="PackedScene" uid="uid://c61hf4ghi4jvi" path="res://Assets/Prefabs/ProjectItem.tscn" id="4_f178q"]
+[ext_resource type="Texture2D" uid="uid://dnl615y81n5pa" path="res://Assets/Icons/Edit.svg" id="6_f178q"]
+[ext_resource type="Texture2D" uid="uid://pii4gniqf33d" path="res://Assets/Icons/MainPlay.svg" id="7_1orjo"]
+[ext_resource type="Texture2D" uid="uid://mfc8i34x6ptc" path="res://Assets/Icons/Rename.svg" id="8_l8loj"]
+[ext_resource type="Texture2D" uid="uid://bj4t56r1fh4n1" path="res://Assets/Icons/Script.svg" id="9_1orjo"]
+[ext_resource type="Texture2D" uid="uid://drwmme3m4aoer" path="res://Assets/Icons/Remove.svg" id="9_lgi5v"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_lo8bo"]
+bg_color = Color(0.13333334, 0.1254902, 0.14901961, 1)
+corner_radius_top_left = 1
+corner_radius_top_right = 1
+corner_radius_bottom_right = 1
+corner_radius_bottom_left = 1
+
+[node name="ProjectManager" type="Control" node_paths=PackedStringArray("CreateButton")]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+script = ExtResource("1_1orjo")
+ProjectItem = ExtResource("4_f178q")
+CreateButton = NodePath("SecondaryBackground/VBoxContainer/Upper/Create")
+
+[node name="Background" type="Panel" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_type_variation = &"IodeSecondary"
+
+[node name="SecondaryBackground" type="Panel" parent="."]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.00625
+anchor_top = 0.052083332
+anchor_right = 0.99375
+anchor_bottom = 0.96458334
+theme_type_variation = &"IodePrimary"
+metadata/_edit_use_anchors_ = true
+
+[node name="VBoxContainer" type="VBoxContainer" parent="SecondaryBackground"]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.003164557
+anchor_top = 0.00456621
+anchor_right = 0.9968355
+anchor_bottom = 0.9954338
+metadata/_edit_use_anchors_ = true
+
+[node name="Upper" type="HBoxContainer" parent="SecondaryBackground/VBoxContainer"]
+layout_mode = 2
+theme_override_constants/separation = 5
+metadata/_edit_use_anchors_ = true
+
+[node name="Create" type="Button" parent="SecondaryBackground/VBoxContainer/Upper"]
+layout_mode = 2
+theme_override_constants/h_separation = 6
+text = "Create"
+icon = ExtResource("1_tswjx")
+
+[node name="Import" type="Button" parent="SecondaryBackground/VBoxContainer/Upper"]
+layout_mode = 2
+theme_override_constants/h_separation = 6
+text = "Import"
+icon = ExtResource("2_lo8bo")
+
+[node name="Scan" type="Button" parent="SecondaryBackground/VBoxContainer/Upper"]
+layout_mode = 2
+theme_override_constants/h_separation = 6
+text = "Scan"
+icon = ExtResource("3_ikh36")
+
+[node name="LineEdit" type="LineEdit" parent="SecondaryBackground/VBoxContainer/Upper"]
+layout_mode = 2
+size_flags_horizontal = 3
+placeholder_text = "Filter Projects"
+right_icon = ExtResource("3_ikh36")
+
+[node name="Label" type="Label" parent="SecondaryBackground/VBoxContainer/Upper"]
+layout_mode = 2
+text = "Sort: "
+
+[node name="OptionButton" type="OptionButton" parent="SecondaryBackground/VBoxContainer/Upper"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_stretch_ratio = 0.3
+selected = 0
+item_count = 4
+popup/item_0/text = "Last Edited"
+popup/item_0/id = 0
+popup/item_1/text = "Name"
+popup/item_1/id = 1
+popup/item_2/text = "Path"
+popup/item_2/id = 2
+popup/item_3/text = "Tags"
+popup/item_3/id = 3
+
+[node name="ProjectList" type="HBoxContainer" parent="SecondaryBackground/VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_constants/separation = 5
+metadata/_edit_use_anchors_ = true
+
+[node name="Panel" type="Panel" parent="SecondaryBackground/VBoxContainer/ProjectList"]
+custom_minimum_size = Vector2(0, 831)
+layout_mode = 2
+size_flags_horizontal = 3
+theme_type_variation = &"IodeSecondary"
+theme_override_styles/panel = SubResource("StyleBoxFlat_lo8bo")
+
+[node name="ScrollContainer" type="ScrollContainer" parent="SecondaryBackground/VBoxContainer/ProjectList/Panel"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+draw_focus_border = true
+
+[node name="VBoxContainer" type="VBoxContainer" parent="SecondaryBackground/VBoxContainer/ProjectList/Panel/ScrollContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="SecondaryBackground/VBoxContainer/ProjectList"]
+custom_minimum_size = Vector2(150, 0)
+layout_mode = 2
+
+[node name="Button" type="Button" parent="SecondaryBackground/VBoxContainer/ProjectList/VBoxContainer"]
+layout_mode = 2
+text = "Edit"
+icon = ExtResource("6_f178q")
+
+[node name="Button2" type="Button" parent="SecondaryBackground/VBoxContainer/ProjectList/VBoxContainer"]
+layout_mode = 2
+text = "Run"
+icon = ExtResource("7_1orjo")
+
+[node name="Button3" type="Button" parent="SecondaryBackground/VBoxContainer/ProjectList/VBoxContainer"]
+layout_mode = 2
+text = "Rename"
+icon = ExtResource("8_l8loj")
+
+[node name="Button5" type="Button" parent="SecondaryBackground/VBoxContainer/ProjectList/VBoxContainer"]
+layout_mode = 2
+text = "Manage Tags"
+icon = ExtResource("9_1orjo")
+
+[node name="Button4" type="Button" parent="SecondaryBackground/VBoxContainer/ProjectList/VBoxContainer"]
+layout_mode = 2
+text = "Delete"
+icon = ExtResource("9_lgi5v")
+
+[node name="Label" type="Label" parent="."]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -121.0
+offset_top = -28.0
+offset_right = -8.0
+offset_bottom = -5.0
+grow_horizontal = 0
+grow_vertical = 0
+theme_override_colors/font_color = Color(0.43529412, 0.43137255, 0.44705883, 1)
+text = "v0.0.1 [2abdef]"

@@ -1,0 +1,62 @@
+[gd_scene load_steps=5 format=3 uid="uid://c61hf4ghi4jvi"]
+
+[ext_resource type="Script" uid="uid://bllicl4yrftcg" path="res://UI/ProjectItem.cs" id="1_aps55"]
+[ext_resource type="Texture2D" uid="uid://c646dkluialh1" path="res://Assets/Icons/NonFavorite.svg" id="1_r70r7"]
+[ext_resource type="Texture2D" uid="uid://bl3ke3xam8d11" path="res://icon.png" id="2_sptwl"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_qw0bh"]
+bg_color = Color(0.13333334, 0.1254902, 0.14901961, 1)
+border_width_bottom = 1
+border_color = Color(0.19215687, 0.1882353, 0.21176471, 1)
+
+[node name="Project" type="Panel"]
+custom_minimum_size = Vector2(0, 74)
+theme_type_variation = &"IodeSecondary"
+theme_override_styles/panel = SubResource("StyleBoxFlat_qw0bh")
+script = ExtResource("1_aps55")
+
+[node name="HBoxContainer" type="HBoxContainer" parent="."]
+layout_mode = 1
+anchors_preset = -1
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 2.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/separation = 9
+
+[node name="VBoxContainer" type="VBoxContainer" parent="HBoxContainer"]
+layout_mode = 2
+alignment = 1
+
+[node name="Panel2" type="TextureRect" parent="HBoxContainer/VBoxContainer"]
+custom_minimum_size = Vector2(14, 14)
+layout_mode = 2
+texture = ExtResource("1_r70r7")
+expand_mode = 1
+
+[node name="TextureRect" type="TextureRect" parent="HBoxContainer"]
+custom_minimum_size = Vector2(64, 64)
+layout_mode = 2
+texture = ExtResource("2_sptwl")
+expand_mode = 2
+
+[node name="VBoxContainer2" type="VBoxContainer" parent="HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = -2
+alignment = 1
+
+[node name="Label" type="Label" parent="HBoxContainer/VBoxContainer2"]
+custom_minimum_size = Vector2(200, 23)
+layout_mode = 2
+text = "Iode"
+metadata/_edit_use_anchors_ = true
+
+[node name="Label2" type="Label" parent="HBoxContainer/VBoxContainer2"]
+custom_minimum_size = Vector2(300, 18)
+layout_mode = 2
+theme_override_colors/font_color = Color(0.43529412, 0.43137255, 0.44705883, 1)
+theme_override_font_sizes/font_size = 13
+text = "8/2/2025 3:11 PM"
+metadata/_edit_use_anchors_ = true
