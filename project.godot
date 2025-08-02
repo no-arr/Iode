@@ -11,17 +11,32 @@ config_version=5
 [application]
 
 config/name="Iode"
-config/features=PackedStringArray("4.5", "Mobile")
+config/tags=PackedStringArray("iode")
+run/main_scene="uid://bou28ant8jhl6"
+config/features=PackedStringArray("4.5", "C#", "Mobile")
+boot_splash/bg_color=Color(1, 1, 1, 1)
+boot_splash/image="uid://bl3ke3xam8d11"
 config/icon="uid://bl3ke3xam8d11"
+boot_splash/minimum_display_time=250
+
+[autoload]
+
+PopupManager="*res://Assets/Prefabs/PopupManager.tscn"
 
 [display]
 
 window/size/viewport_width=1280
 window/size/viewport_height=960
+window/subwindows/embed_subwindows=false
+window/vsync/vsync_mode=0
 
 [dotnet]
 
 project/assembly_name="Iode"
+
+[gui]
+
+theme/custom="uid://ynvapcvne8nt"
 
 [rendering]
 
