@@ -3,7 +3,7 @@ on: push
 
 jobs:
   tests:
-    name: 👀 Building  on ${{ matrix.os }}
+    name: 🔨 Building on ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
@@ -33,12 +33,8 @@ jobs:
       - uses: chickensoft-games/setup-godot@v2
         name: 🤖 Setup Godot
         with:
-          # Version must include major, minor, and patch, and be >= 4.0.0
-          # Pre-release label is optional.
-          version: 4.5.0-beta.1 # also valid: 4.0.0.rc1 or 4.0.0 or "global.json", etc
-          # Use .NET-enabled version of Godot (the default is also true).
+          version: 4.5.0-beta.1 # beta.4 for some reason has issues
           use-dotnet: true
-          # Include the Godot Export Templates (the default is false).
           include-templates: true
 
       - name: 🧑‍🔬 Generate .NET Bindings
@@ -52,19 +48,23 @@ jobs:
             mkdir -p ios_export
             godot --headless --export-debug "iOS" ios_export/iode.zip
       
-      - name: 🧪 Compiling ipa
+      - name: 📦 Compiling ipa
         run: | 
             cd ios_export
             xcodebuild archive -project iode.xcodeproj -scheme 'iode' -archivePath Iode-Project.xcarchive -configuration Release CODE_SIGN_IDENTITY="" CODE_SIGNING_REQUIRED=NO
+
             #mkdir Payload
+            mv Iode-Project.xcarchive/Products/Applications/iode.app Payload/iode.app
+
+            zip -r "Iode.ipa" "Payload"
+
+            mv Iode.ipa ${{ runner.temp }}/Iode.ipa
+
             mv Iode-Project.xcarchive ${{ runner.temp }}/Iode-Project.xcarchive
-            ls
         
       - name: Upload application
         uses: actions/upload-artifact@v4
         with:
           name: Iode-Project
           path: ${{ runner.temp }}/Iode-Project.xcarchive
-          # you can also archive the entire directory
-          # path: ${{ runner.temp }}/build
           retention-days: 3
