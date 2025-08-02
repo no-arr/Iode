@@ -16,5 +16,7 @@ namespace Iode.Core
 
             Singleton = this;
         }
+
+        
     }
 }
