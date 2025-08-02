@@ -50,7 +50,7 @@ jobs:
       - name: 📦 Export Game (MacOS Headless)
         run: |
             mkdir -p ios_export
-            godot --headless --export-release "iOS" ios_export/iode.xcodeproj
+            godot --headless --export-debug "iOS" ios_export/iode.xcodeproj
 
       
       - name: 🧪 Compiling ipa
