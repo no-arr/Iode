@@ -1,6 +1,6 @@
 name: 🚥 iOS Build
 on: 
-  workflow_dispatch:
+  workflow_dispatch
 
 jobs:
   tests:

@@ -1,4 +1,13 @@
-# Iode
+<p align="center">
+  <p align="center">
+	<img width="100" height="100" src="https://raw.githubusercontent.com/no-arr/Iode/refs/heads/main/icon.png" alt="Logo">
+  </p>
+</p>
+
+<div align="center">
+[![🚥 iOS Build](https://github.com/no-arr/Iode/actions/workflows/ios-publish.yml/badge.svg)](https://github.com/no-arr/Iode/actions/workflows/ios-publish.yml)
+
+</div>
 
 **Iode** is an unofficial port of the Godot game engine to iPad, built entirely in C# using .NET 8. It runs on top of the Godot game editor and is currently in the very early stages of development. Iode is both an ambitious technical experiment and a personal learning project.
 
