@@ -53,14 +53,12 @@ jobs:
             cd ios_export
             xcodebuild archive -project iode.xcodeproj -scheme 'iode' -archivePath Iode-Project.xcarchive -configuration Release CODE_SIGN_IDENTITY="" CODE_SIGNING_REQUIRED=NO
 
-            #mkdir Payload
+            mkdir Payload
             mv Iode-Project.xcarchive/Products/Applications/iode.app Payload/iode.app
 
             zip -r "Iode.ipa" "Payload"
 
             mv Iode.ipa ${{ runner.temp }}/Iode.ipa
-
-            mv Iode-Project.xcarchive ${{ runner.temp }}/Iode-Project.xcarchive
         
       - name: Upload application
         uses: actions/upload-artifact@v4
