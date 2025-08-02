@@ -1,4 +1,7 @@
-# Iode
+
+<p align="center">
+    <img width="180" height="180" src="./CorneredIcon.png" alt="Logo">
+</p>
 
 **Iode** is an unofficial port of the Godot game engine to iPad, built entirely in C# using .NET 8. It runs on top of the Godot game editor and is currently in the very early stages of development. Iode is both an ambitious technical experiment and a personal learning project.
 
