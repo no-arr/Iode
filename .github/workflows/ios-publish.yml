@@ -1,6 +1,5 @@
 name: 🚥 iOS Build
-on: 
-  workflow_dispatch
+on: push
 
 jobs:
   tests:

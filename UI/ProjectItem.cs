@@ -13,7 +13,7 @@ namespace Iode.UI
         public ProjectItem ApplyProjectMetadata(ProjectMetadata projectMetadata)
         {
             ProjectName.Text = projectMetadata.Name;
-            ProjectMade.Text = projectMetadata.CreatedAt.ToLongDateString();
+            ProjectMade.Text = $"Created at: {projectMetadata.CreatedAt}";
             return this;
         }
 

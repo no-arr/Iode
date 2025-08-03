@@ -18,7 +18,7 @@ corner_radius_top_right = 1
 corner_radius_bottom_right = 1
 corner_radius_bottom_left = 1
 
-[node name="ProjectManager" type="Control" node_paths=PackedStringArray("CreateButton")]
+[node name="ProjectManager" type="Control" node_paths=PackedStringArray("CreateButton", "ProjectList")]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -28,6 +28,7 @@ grow_vertical = 2
 script = ExtResource("1_1orjo")
 ProjectItem = ExtResource("4_f178q")
 CreateButton = NodePath("SecondaryBackground/VBoxContainer/Upper/Create")
+ProjectList = NodePath("SecondaryBackground/VBoxContainer/ProjectList/Panel/ScrollContainer/VBoxContainer")
 
 [node name="Background" type="Panel" parent="."]
 layout_mode = 1
@@ -138,16 +139,19 @@ layout_mode = 2
 
 [node name="Button" type="Button" parent="SecondaryBackground/VBoxContainer/ProjectList/VBoxContainer"]
 layout_mode = 2
+disabled = true
 text = "Edit"
 icon = ExtResource("6_f178q")
 
 [node name="Button2" type="Button" parent="SecondaryBackground/VBoxContainer/ProjectList/VBoxContainer"]
 layout_mode = 2
+disabled = true
 text = "Run"
 icon = ExtResource("7_1orjo")
 
 [node name="Button3" type="Button" parent="SecondaryBackground/VBoxContainer/ProjectList/VBoxContainer"]
 layout_mode = 2
+disabled = true
 text = "Rename"
 icon = ExtResource("8_l8loj")
 
@@ -158,6 +162,7 @@ icon = ExtResource("9_1orjo")
 
 [node name="Button4" type="Button" parent="SecondaryBackground/VBoxContainer/ProjectList/VBoxContainer"]
 layout_mode = 2
+disabled = true
 text = "Delete"
 icon = ExtResource("9_lgi5v")
 

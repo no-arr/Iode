@@ -49,7 +49,7 @@ namespace Iode.UI.Dialogues
             ProjectManager.Singleton.MakeProject(new()
             {
                 Name = projectName,
-                CreatedAt = DateTime.Now,
+                CreatedAt = DateTime.Now.ToString(),
                 Tags = [],
             });
 

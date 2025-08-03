@@ -33,7 +33,7 @@ namespace Iode.Core
                 AlwaysOnTop = true,
                 Unresizable = true,
                 Transient = false,
-                InitialPosition = Window.WindowInitialPosition.CenterScreenWithMouseFocus
+                InitialPosition = Window.WindowInitialPosition.CenterMainWindowScreen,
             };
 
             acceptDialog.Confirmed += acceptDialog.QueueFree;

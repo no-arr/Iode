@@ -9,11 +9,13 @@ bg_color = Color(0.13333334, 0.1254902, 0.14901961, 1)
 border_width_bottom = 1
 border_color = Color(0.19215687, 0.1882353, 0.21176471, 1)
 
-[node name="Project" type="Panel"]
+[node name="Project" type="Panel" node_paths=PackedStringArray("ProjectName", "ProjectMade")]
 custom_minimum_size = Vector2(0, 74)
 theme_type_variation = &"IodeSecondary"
 theme_override_styles/panel = SubResource("StyleBoxFlat_qw0bh")
 script = ExtResource("1_aps55")
+ProjectName = NodePath("HBoxContainer/VBoxContainer2/Label")
+ProjectMade = NodePath("HBoxContainer/VBoxContainer2/Label2")
 
 [node name="HBoxContainer" type="HBoxContainer" parent="."]
 layout_mode = 1
