@@ -28,6 +28,7 @@ PopupManager="*res://Assets/Prefabs/PopupManager.tscn"
 window/size/viewport_width=1280
 window/size/viewport_height=960
 window/subwindows/embed_subwindows=false
+window/stretch/scale=1.1
 window/vsync/vsync_mode=0
 
 [dotnet]

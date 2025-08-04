@@ -1,4 +1,4 @@
-[gd_scene load_steps=12 format=3 uid="uid://bou28ant8jhl6"]
+[gd_scene load_steps=13 format=3 uid="uid://bou28ant8jhl6"]
 
 [ext_resource type="Script" uid="uid://bcoxlphbewlju" path="res://Core/ProjectManager.cs" id="1_1orjo"]
 [ext_resource type="Texture2D" uid="uid://bnj573edodtxh" path="res://Assets/Icons/Add.svg" id="1_tswjx"]
@@ -10,6 +10,7 @@
 [ext_resource type="Texture2D" uid="uid://mfc8i34x6ptc" path="res://Assets/Icons/Rename.svg" id="8_l8loj"]
 [ext_resource type="Texture2D" uid="uid://bj4t56r1fh4n1" path="res://Assets/Icons/Script.svg" id="9_1orjo"]
 [ext_resource type="Texture2D" uid="uid://drwmme3m4aoer" path="res://Assets/Icons/Remove.svg" id="9_lgi5v"]
+[ext_resource type="Texture2D" uid="uid://cvkt4ae3b2bge" path="res://Assets/Logos/IodeFull.png" id="11_l8loj"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_lo8bo"]
 bg_color = Color(0.13333334, 0.1254902, 0.14901961, 1)
@@ -18,7 +19,7 @@ corner_radius_top_right = 1
 corner_radius_bottom_right = 1
 corner_radius_bottom_left = 1
 
-[node name="ProjectManager" type="Control" node_paths=PackedStringArray("CreateButton", "ProjectList")]
+[node name="ProjectManager" type="Control" node_paths=PackedStringArray("CreateButton", "EditButton", "RunButton", "RenameButton", "DeleteButton", "ProjectList")]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -28,6 +29,10 @@ grow_vertical = 2
 script = ExtResource("1_1orjo")
 ProjectItem = ExtResource("4_f178q")
 CreateButton = NodePath("SecondaryBackground/VBoxContainer/Upper/Create")
+EditButton = NodePath("SecondaryBackground/VBoxContainer/ProjectList/VBoxContainer/Edit")
+RunButton = NodePath("SecondaryBackground/VBoxContainer/ProjectList/VBoxContainer/Run")
+RenameButton = NodePath("SecondaryBackground/VBoxContainer/ProjectList/VBoxContainer/Rename")
+DeleteButton = NodePath("SecondaryBackground/VBoxContainer/ProjectList/VBoxContainer/Delete")
 ProjectList = NodePath("SecondaryBackground/VBoxContainer/ProjectList/Panel/ScrollContainer/VBoxContainer")
 
 [node name="Background" type="Panel" parent="."]
@@ -137,30 +142,30 @@ theme_override_constants/separation = 2
 custom_minimum_size = Vector2(150, 0)
 layout_mode = 2
 
-[node name="Button" type="Button" parent="SecondaryBackground/VBoxContainer/ProjectList/VBoxContainer"]
+[node name="Edit" type="Button" parent="SecondaryBackground/VBoxContainer/ProjectList/VBoxContainer"]
 layout_mode = 2
 disabled = true
 text = "Edit"
 icon = ExtResource("6_f178q")
 
-[node name="Button2" type="Button" parent="SecondaryBackground/VBoxContainer/ProjectList/VBoxContainer"]
+[node name="Run" type="Button" parent="SecondaryBackground/VBoxContainer/ProjectList/VBoxContainer"]
 layout_mode = 2
 disabled = true
 text = "Run"
 icon = ExtResource("7_1orjo")
 
-[node name="Button3" type="Button" parent="SecondaryBackground/VBoxContainer/ProjectList/VBoxContainer"]
+[node name="Rename" type="Button" parent="SecondaryBackground/VBoxContainer/ProjectList/VBoxContainer"]
 layout_mode = 2
 disabled = true
 text = "Rename"
 icon = ExtResource("8_l8loj")
 
-[node name="Button5" type="Button" parent="SecondaryBackground/VBoxContainer/ProjectList/VBoxContainer"]
+[node name="ManageTags" type="Button" parent="SecondaryBackground/VBoxContainer/ProjectList/VBoxContainer"]
 layout_mode = 2
 text = "Manage Tags"
 icon = ExtResource("9_1orjo")
 
-[node name="Button4" type="Button" parent="SecondaryBackground/VBoxContainer/ProjectList/VBoxContainer"]
+[node name="Delete" type="Button" parent="SecondaryBackground/VBoxContainer/ProjectList/VBoxContainer"]
 layout_mode = 2
 disabled = true
 text = "Delete"
@@ -181,3 +186,14 @@ grow_horizontal = 0
 grow_vertical = 0
 theme_override_colors/font_color = Color(0.43529412, 0.43137255, 0.44705883, 1)
 text = "v0.0.1 [2abdef]"
+
+[node name="TextureRect" type="TextureRect" parent="."]
+modulate = Color(1, 1, 1, 0.84313726)
+layout_mode = 1
+anchors_preset = -1
+offset_left = 7.0
+offset_top = 5.0
+offset_right = 111.17727
+offset_bottom = 46.0
+texture = ExtResource("11_l8loj")
+expand_mode = 1

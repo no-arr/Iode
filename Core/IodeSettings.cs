@@ -7,7 +7,7 @@ namespace Iode.Core
     {
         public static IodeSettings Singleton { get; private set; } = null;
 
-        IodeSettings()
+        public IodeSettings()
         {
             if (Singleton != null)
             {

@@ -33,7 +33,7 @@ namespace Iode.UI.Dialogues
 
         private void CreationSubmitted()
         {
-            string projectName = ProjectName.Text;
+            string projectName = ProjectName.Text.Replace(" ", "-");
 
             if (!StringVerifier.IsValid(projectName) || !StringVerifier.IsOnlyEnglishLetters(projectName))
             {
@@ -41,10 +41,16 @@ namespace Iode.UI.Dialogues
                 return;
             }
 
-            if (EditNow.ButtonPressed)
+            if (ProjectManager.Singleton.ProjectExists(projectName))
             {
-                GD.Print("Open in editor");
+                PopupManager.Singleton.AlertPopup("A project with the same name exists. Please choose a different one or delete the previous project.");
+                return;
             }
+
+            if (EditNow.ButtonPressed)
+                {
+                    GD.Print("Open in editor");
+                }
 
             ProjectManager.Singleton.MakeProject(new()
             {

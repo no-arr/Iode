@@ -7,10 +7,11 @@ namespace Iode.Core.Utils
 
         public static bool IsOnlyEnglishLetters(string input)
         {
+            input = input.Replace(" ", string.Empty);
             for (int i = 0; i < input.Length; i++)
             {
                 char c = input[i];
-                if ((c < 'A' || c > 'Z') && (c < 'a' || c > 'z'))
+                if ((c < 'A' || c > 'Z') && (c < 'a' || c > 'z') && c != '-')
                     return false;
             }
 

@@ -1,11 +1,13 @@
 using Godot;
 using Godot.Collections;
+using Iode.Core.Utils;
 using Iode.Models;
 using Iode.UI;
 using Iode.UI.Dialogues;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Linq;
 
 namespace Iode.Core
 {
@@ -15,12 +17,29 @@ namespace Iode.Core
         public PackedScene ProjectItem { get; set; }
 
         [Export]
-        public required Button CreateButton, ImportButton, ScanButton;
-
-        [Export]
         public VBoxContainer ProjectList { get; set; }
 
+        [Export]
+        public required Button CreateButton, ImportButton, ScanButton, EditButton, RunButton, RenameButton, DeleteButton;
+
         public static ProjectManager Singleton { get; private set; } = null;
+
+        private readonly System.Collections.Generic.Dictionary<string, ProjectItem> BuiltProjectItems = [];
+
+        private ProjectItem _selectedProjectItem = null;
+        public ProjectItem SelectedProjectItem
+        {
+            get => _selectedProjectItem;
+            set
+            {
+                if (_selectedProjectItem != null)
+                {
+                    _selectedProjectItem.ThemeTypeVariation = "IodeSecondary";
+                }
+                _selectedProjectItem = value;
+                UpdateButtonStates();
+            }
+        }
 
         public override void _Ready()
         {
@@ -31,39 +50,42 @@ namespace Iode.Core
 
             Singleton = this;
 
+            // Establish signals
             CreateButton.Pressed += () => ProjectDialog.Singleton.Popup();
 
+            DeleteButton.Pressed += RemoveProject;
+
             // Load projects
-            foreach (ProjectMetadata projectMetadata in GetProjects())
+            List<ProjectMetadata> projects = ProjectsFile.GetProjects();
+            projects.Reverse();
+            foreach (ProjectMetadata projectMetadata in projects)
             {
-                ProjectList.AddChild(ProjectItem.Instantiate<ProjectItem>().ApplyProjectMetadata(projectMetadata));
+                ProjectItem builtProjectItem = ProjectItem.Instantiate<ProjectItem>().ApplyProjectMetadata(projectMetadata);
+                BuiltProjectItems[projectMetadata.Name] = builtProjectItem;
+                ProjectList.AddChild(builtProjectItem);
             }
+        }
+
+        public override void _ExitTree()
+        {
+            ProjectsFile.FlushToDisk();
         }
 
         public void MakeProject(ProjectMetadata projectMetadata)
         {
-            ProjectList.AddChild(ProjectItem.Instantiate<ProjectItem>().ApplyProjectMetadata(projectMetadata));
+            ProjectItem projectItem = ProjectItem.Instantiate<ProjectItem>().ApplyProjectMetadata(projectMetadata);
+            BuiltProjectItems[projectMetadata.Name] = projectItem;
 
-            Error dirCheck = DirAccess.MakeDirRecursiveAbsolute($"user://user_projects/{projectMetadata.Name.Replace(" ", "-")}");
+            ProjectList.AddChild(projectItem);
+            ProjectList.MoveChild(projectItem, 0);
+
+            Error dirCheck = DirAccess.MakeDirRecursiveAbsolute($"user://user_projects/{projectMetadata.Name}");
             if (dirCheck != Error.Ok)
             {
                 PopupManager.Singleton.AlertPopup("Failed to create the project directory.");
                 return;
             }
 
-            string jsonPath = "user://projects.json";
-
-            Dictionary projectsDict = [];
-
-            if (FileAccess.FileExists(jsonPath))
-            {
-                using var existingFile = FileAccess.Open(jsonPath, FileAccess.ModeFlags.Read);
-                var content = existingFile.GetAsText();
-
-                var parsed = Json.ParseString(content);
-                if (parsed.Obj is Dictionary d)
-                    projectsDict = d;
-            }
 
             Dictionary projectData = new()
             {
@@ -71,79 +93,42 @@ namespace Iode.Core
                 { "CreatedAt", projectMetadata.CreatedAt.ToString() },
             };
 
-            projectsDict[projectMetadata.Name] = projectData;
-
-            using var file = FileAccess.Open(jsonPath, FileAccess.ModeFlags.Write);
-            file.StoreString(Json.Stringify(projectsDict, indent: "\t"));
-            file.Close();
+            ProjectsFile.AddProject(projectMetadata.Name, projectData);
         }
 
-
-        private static List<ProjectMetadata> GetProjects()
+        public bool ProjectExists(string projectName) =>
+            BuiltProjectItems.ContainsKey(projectName);
+        
+        private void RemoveProject()
         {
-            List<ProjectMetadata> projects = [];
-
-            string projectsFile = GetProjectsFile();
-            if (string.IsNullOrWhiteSpace(projectsFile))
+            if (SelectedProjectItem == null)
             {
-                return projects;
+                return;
             }
 
-            var parsed = Json.ParseString(projectsFile);
-            if (parsed.Obj is not Dictionary dict)
+            string projectName = SelectedProjectItem.ProjectMetadata.Value.Name;
+            BuiltProjectItems[projectName].QueueFree();
+            BuiltProjectItems.Remove(projectName);
+
+            DirAccess dirAccess = DirAccess.Open($"user://user_projects/{projectName}");
+            if (dirAccess == null)
             {
-                PopupManager.Singleton.AlertPopup("projects.json file is corrupted.");
-                return projects;
+                PopupManager.Singleton.AlertPopup("Project folder to delete was not found.");
+                return;
             }
 
-            foreach (var key in dict.Keys)
-            {
-                if (dict[key].Obj is not Dictionary properties)
-                    continue;
-
-                ProjectMetadata metadata = new()
-                {
-                    Name = key.ToString()
-                };
-
-                if (properties.TryGetValue("CreatedAt", out Variant createdAt))
-                {
-                    metadata.CreatedAt = createdAt.AsString();
-                }
-
-                projects.Add(metadata);
-            }
-
-            return projects;
+            ProjectsFile.RemoveProject(projectName);
+            GD.Print(dirAccess.Remove($"user://user_projects/{projectName}"));
+            SelectedProjectItem = null;
         }
 
-
-        private static string GetProjectsFile()
+        private void UpdateButtonStates()
         {
-            string path = "user://projects.json";
-
-            if (!FileAccess.FileExists(path))
-            {
-                using var createFile = FileAccess.Open(path, FileAccess.ModeFlags.Write);
-                createFile.StoreString("{}");
-                createFile.Close();
-                return "{}";
-            }
-
-            using var fileAccess = FileAccess.Open(path, FileAccess.ModeFlags.Read);
-            string faContents = fileAccess.GetAsText().Trim();
-
-            if (string.IsNullOrWhiteSpace(faContents))
-            {
-                fileAccess.Close();
-                using var fixFile = FileAccess.Open(path, FileAccess.ModeFlags.Write);
-                fixFile.StoreString("{}");
-                fixFile.Close();
-                return "{}";
-            }
-
-            return faContents;
+            bool enabled = _selectedProjectItem != null;
+            EditButton.Disabled = !enabled;
+            RunButton.Disabled = !enabled;
+            RenameButton.Disabled = !enabled;
+            DeleteButton.Disabled = !enabled;
         }
-
     }
 }

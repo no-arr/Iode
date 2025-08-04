@@ -4,15 +4,11 @@
 [ext_resource type="Texture2D" uid="uid://c646dkluialh1" path="res://Assets/Icons/NonFavorite.svg" id="1_r70r7"]
 [ext_resource type="Texture2D" uid="uid://bl3ke3xam8d11" path="res://icon.png" id="2_sptwl"]
 
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_qw0bh"]
-bg_color = Color(0.13333334, 0.1254902, 0.14901961, 1)
-border_width_bottom = 1
-border_color = Color(0.19215687, 0.1882353, 0.21176471, 1)
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_aps55"]
 
 [node name="Project" type="Panel" node_paths=PackedStringArray("ProjectName", "ProjectMade")]
 custom_minimum_size = Vector2(0, 74)
 theme_type_variation = &"IodeSecondary"
-theme_override_styles/panel = SubResource("StyleBoxFlat_qw0bh")
 script = ExtResource("1_aps55")
 ProjectName = NodePath("HBoxContainer/VBoxContainer2/Label")
 ProjectMade = NodePath("HBoxContainer/VBoxContainer2/Label2")
@@ -62,3 +58,18 @@ theme_override_colors/font_color = Color(0.43529412, 0.43137255, 0.44705883, 1)
 theme_override_font_sizes/font_size = 13
 text = "8/2/2025 3:11 PM"
 metadata/_edit_use_anchors_ = true
+
+[node name="Overlay" type="Button" parent="."]
+layout_mode = 1
+anchors_preset = -1
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -4.0
+offset_right = 4.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_styles/normal = SubResource("StyleBoxEmpty_aps55")
+theme_override_styles/pressed = SubResource("StyleBoxEmpty_aps55")
+theme_override_styles/hover = SubResource("StyleBoxEmpty_aps55")
+theme_override_styles/disabled = SubResource("StyleBoxEmpty_aps55")
+theme_override_styles/focus = SubResource("StyleBoxEmpty_aps55")

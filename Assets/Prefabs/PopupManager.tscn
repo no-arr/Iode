@@ -5,8 +5,9 @@
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_mu15w"]
 
-[node name="PopupManager" type="Node"]
+[node name="PopupManager" type="Node" node_paths=PackedStringArray("ConfirmationDialog")]
 script = ExtResource("1_mu15w")
+ConfirmationDialog = NodePath("ConfirmationDialog")
 
 [node name="ProjectDialog" type="PopupPanel" parent="." node_paths=PackedStringArray("CreateButton", "CancelButton", "ProjectName", "EditNow")]
 disable_3d = true
@@ -26,9 +27,11 @@ ProjectName = NodePath("Panel/VBoxContainer/Name/LineEdit")
 EditNow = NodePath("Panel/VBoxContainer/HBoxContainer3/CheckBox")
 
 [node name="Panel" type="Panel" parent="ProjectDialog"]
-anchors_preset = 15
+anchors_preset = -1
 anchor_right = 1.0
 anchor_bottom = 1.0
+offset_right = 570.0
+offset_bottom = 231.0
 grow_horizontal = 2
 grow_vertical = 2
 size_flags_horizontal = 3
@@ -93,3 +96,20 @@ alignment = 1
 layout_mode = 2
 button_pressed = true
 text = "Edit now"
+
+[node name="ConfirmationDialog" type="ConfirmationDialog" parent="."]
+disable_3d = true
+oversampling_override = 1.0
+initial_position = 2
+
+[node name="Panel" type="Panel" parent="ConfirmationDialog"]
+anchors_preset = -1
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 8.0
+offset_top = 8.0
+offset_right = -8.0
+offset_bottom = -49.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_type_variation = &"IodePrimary"
